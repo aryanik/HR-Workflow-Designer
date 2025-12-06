@@ -21,8 +21,8 @@ export const WorkflowSimulator: React.FC = () => {
     const workflow = {
       nodes: nodes.map(n => ({
         id: n.id,
-        type: n.type,
-        data: n.data,
+        type: n.type || 'unknown',
+        data: n.data as unknown as Record<string, unknown>,
       })),
       edges: edges.map(e => ({
         id: e.id,

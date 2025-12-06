@@ -1,7 +1,26 @@
 import { useMemo } from 'react';
 import type { Node, Edge } from 'reactflow';
 import { useAppSelector } from '../../../app/hooks';
-import type { ValidationResult, ValidationError } from '../types/nodes.types';
+import type { 
+  ValidationResult, 
+  ValidationError,
+  WorkflowNodeData,
+  TaskNodeData,
+  ApprovalNodeData 
+} from '../types/nodes.types';
+
+// Helper function to safely get node title
+const getNodeTitle = (node: Node<WorkflowNodeData>): string => {
+  const data = node.data;
+  if (!data) return 'Untitled';
+  
+  if ('title' in data && typeof data.title === 'string') return data.title;
+  if ('startTitle' in data && typeof data.startTitle === 'string') return data.startTitle;
+  if ('endMessage' in data && typeof data.endMessage === 'string') return data.endMessage;
+  if ('label' in data && typeof data.label === 'string') return data.label;
+  
+  return 'Untitled';
+};
 
 export const useWorkflowValidation = (): ValidationResult => {
   const nodes = useAppSelector(state => state.workflow.nodes);
@@ -51,7 +70,7 @@ export const useWorkflowValidation = (): ValidationResult => {
 
     nodes.forEach(node => {
       if (node.type !== 'start' && !connectedNodeIds.has(node.id)) {
-        const label = node.data?.label || node.data?.title || 'Untitled';
+        const label = getNodeTitle(node);
         errors.push({
           nodeId: node.id,
           message: `Node "${label}" is not connected`,
@@ -71,9 +90,11 @@ export const useWorkflowValidation = (): ValidationResult => {
 
     // Validate node-specific data
     nodes.forEach(node => {
-      const data = node.data || {};
+      const data = node.data;
+      
       if (node.type === 'task') {
-        if (!data.title) {
+        const taskData = data as TaskNodeData;
+        if (!taskData.title) {
           errors.push({
             nodeId: node.id,
             message: 'Task node must have a title',
@@ -81,8 +102,10 @@ export const useWorkflowValidation = (): ValidationResult => {
           });
         }
       }
+      
       if (node.type === 'approval') {
-        if (!data.approverRole) {
+        const approvalData = data as ApprovalNodeData;
+        if (!approvalData.approverRole) {
           errors.push({
             nodeId: node.id,
             message: 'Approval node must specify an approver role',

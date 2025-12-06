@@ -1,7 +1,16 @@
 import { useCallback } from 'react';
+import type { Node } from 'reactflow';
 import { useAppDispatch } from '../../../app/hooks';
 import { addNode } from '../slices/workflowSlice';
-import type { NodeType } from '../types/nodes.types';
+import type { 
+  NodeType,
+  WorkflowNodeData,
+  StartNodeData,
+  TaskNodeData,
+  ApprovalNodeData,
+  AutomatedStepNodeData,
+  EndNodeData
+} from '../types/nodes.types';
 
 export const useNodeOperations = () => {
   const dispatch = useAppDispatch();
@@ -9,7 +18,7 @@ export const useNodeOperations = () => {
   const createNode = useCallback((type: NodeType) => {
     const position = { x: Math.random() * 500, y: Math.random() * 500 };
     
-    const newNode = {
+    const newNode: Node<WorkflowNodeData> = {
       id: `${type}-${Date.now()}`,
       type,
       position,
@@ -22,19 +31,19 @@ export const useNodeOperations = () => {
   return { createNode };
 };
 
-function getDefaultNodeData(type: NodeType) {
+function getDefaultNodeData(type: NodeType): WorkflowNodeData {
   switch (type) {
     case 'start':
-      return { label: 'Start', startTitle: 'New Workflow' };
+      return { label: 'Start', startTitle: 'New Workflow' } as StartNodeData;
     case 'task':
-      return { label: 'Task', title: 'New Task', description: '', assignee: '' };
+      return { label: 'Task', title: 'New Task', description: '', assignee: '' } as TaskNodeData;
     case 'approval':
-      return { label: 'Approval', title: 'Approval Required', approverRole: '' };
+      return { label: 'Approval', title: 'Approval Required', approverRole: '' } as ApprovalNodeData;
     case 'automated':
-      return { label: 'Automated', title: 'Automated Step', actionId: '', actionLabel: '', parameters: {} };
+      return { label: 'Automated', title: 'Automated Step', actionId: '', actionLabel: '', parameters: {} } as AutomatedStepNodeData;
     case 'end':
-      return { label: 'End', endMessage: 'Workflow Complete', showSummary: false };
+      return { label: 'End', endMessage: 'Workflow Complete', showSummary: false } as EndNodeData;
     default:
-      return { label: 'Unknown' };
+      return { label: 'Unknown' } as WorkflowNodeData;
   }
 }
