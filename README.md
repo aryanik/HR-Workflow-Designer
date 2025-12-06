@@ -300,4 +300,17 @@ TypeScript type hierarchy using discriminated unions for type-safe node data.
 - English language (i18n can be added)
 - Single user editing (WebSocket for collaboration possible)
 
+---
+## 🌐 Live Demo
 
+**🔗 Deployed Application:** [https://classy-buttercream-0f4fac.netlify.app/](https://classy-buttercream-0f4fac.netlify.app/)
+
+The application is deployed on Netlify with full Mock Service Worker (MSW) support, allowing you to test all features without a backend:
+
+- ✅ Create and configure workflow nodes
+- ✅ Connect nodes visually
+- ✅ Test workflow execution with simulation
+- ✅ Export/Import workflows as JSON
+- ✅ Real-time validation
+
+---
